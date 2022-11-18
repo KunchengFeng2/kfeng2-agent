@@ -145,6 +145,8 @@ func sendToLoggly(size int) {
 		fmt.Println("Loggly response: ", response)
 		fmt.Println(err)
 	}
+
+	defer response.Body.Close() // Very important, without closing this could cause memory leaks.
 }
 
 // The actual response contains tons more information, I'm only using what I need.
