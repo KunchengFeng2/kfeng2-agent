@@ -79,7 +79,10 @@ func main() {
 			var address = apiURL + server
 			var body = apiCall(address)
 			var bodyGo = toGoStruct(body)
-			sendToDB(bodyGo)
+			if bodyGo.Online == true {
+				// fmt.Println(bodyGo)
+				sendToDB(bodyGo)
+			}
 			dataSize += len(body)
 		}
 		sendToLoggly(dataSize)
@@ -92,12 +95,14 @@ func main() {
 func apiCall(address string) []byte {
 	response, err := http.Get(address)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error when getting a http response!")
+		fmt.Println(err)
 	}
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error when reading the response body!")
+		fmt.Println(err)
 	}
 
 	response.Body.Close()
@@ -118,7 +123,8 @@ func toGoStruct(data []byte) ServerStatus {
 func sendToDB(item ServerStatus) {
 	awsItem, err := dynamodbattribute.MarshalMap(item)
 	if err != nil {
-		panic("Error marshalling into aws attribute map")
+		fmt.Println("Error marshalling into aws attribute map")
+		fmt.Println(err)
 	}
 
 	params := &dynamodb.PutItemInput{
@@ -130,7 +136,7 @@ func sendToDB(item ServerStatus) {
 	if err != nil {
 		fmt.Println("Problem with putting item into DB.")
 		fmt.Println("DynamoDB response: ", resp)
-		panic(err)
+		fmt.Println(err)
 	}
 }
 
