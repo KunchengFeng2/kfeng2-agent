@@ -29,7 +29,7 @@ func init() {
 		fmt.Println("Problem occured when reading loggly token from environment.")
 	}
 
-	// Establish a new connection
+	// Establish a new connection, if it fails then this agent will terminate.
 	sess, err := session.NewSession()
 	if err != nil {
 		fmt.Println("Problem occured when forming new session!")
